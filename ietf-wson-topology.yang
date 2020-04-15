@@ -29,7 +29,7 @@ module ietf-wson-topology {
  	the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
 
   import ietf-layer0-types {
-    prefix "layer0-types";
+    prefix "l0-types";
     reference
       "RFC XXXX: A YANG Data Model for WSON
        (Wavelength Switched Optical Networks)";
@@ -54,12 +54,11 @@ module ietf-wson-topology {
      topology in wavelength switched optical networks (WSONs).
      The YANG model described in this document is a WSON
      technology-specific YANG model augmenting the generic TE
-     topology module (ietf-te-topology) based on the information model
-     developed in RFC 7446 and the two encoding documents
-     RFC 7581 and RFC 7579 that developed protocol independent
-     encodings based on RFC 7446.
+     topology module (ietf-te-topology) based on the information 
+     model developed in RFC 7446 and the two encoding documents
+     RFC 7579.
 
-     Copyright (c) 2019 IETF Trust and the persons identified
+     Copyright (c) 2020 IETF Trust and the persons identified
      as authors of the code.  All rights reserved.
 
      Redistribution and use in source and binary forms, with
@@ -69,7 +68,7 @@ module ietf-wson-topology {
      Legal Provisions Relating to IETF Documents
      (http://trustee.ietf.org/license-info).";
 
-  revision 2019-02-27 {
+  revision 2020-04-15 {
     description
       "Initial Version";
 
@@ -84,19 +83,14 @@ module ietf-wson-topology {
   grouping wson-node-attributes {
     description "WSON node attributes";
     container wson-node {
-      description "WSON node attrtibutes";
-      leaf node-type {
-        type identityref {
-          base layer0-types:layer0-node-type;
-        }
-        description "WSON node type";
+      description "Candidate type: ROADM or FOADM";
+      leaf is-reconfigurable-node {
+        type boolean;
+        description 
+		  "true - ROADM, 
+		   false - FOADM. ";
       }
     }
-  }
-
-  grouping wson-link-attributes {
-    description
-      "Future WSON link attributes extensions";
   }
 
   grouping wson-tp-attributes {
@@ -128,67 +122,6 @@ module ietf-wson-topology {
     }
   }
 
-  grouping wson-ttp-attributes {
-    description
-      "WSON tunnel termination point (e.g., tranponder) attributes";
-
-    leaf-list supported-operational-modes {
-      type layer0-types:operational-mode;
-      description
-        "List of all supported vendor-specific
-         mode identifiers";
-    }
-
-    leaf configured-operational-modes {
-      type layer0-types:operational-mode;
-      description
-        "Vendor-specific mode identifier configured
-         on the TTP (TE-tunnel Termination Point)";
-    }
-
-    leaf-list supported-fec-types {
-      type identityref {
-        base layer0-types:fec-type;
-      }
-       description
-         "List of all supported FEC (Forward Error Correction)
-          types by this TTP";
-    }
-
-    leaf-list supported-termination-types {
-      type identityref {
-        base layer0-types:term-type;
-      }
-        description
-          "List of all supported termination types by this TTP";
-    }
-
-    leaf supports-bit-stuffing {
-       type boolean;
-       description
-         "Indicates whether bit stuffing is supported by this TTP";
-    }
-
-    leaf is-tunable {
-      type boolean;
-      description
-   "Indicates if the TTP, or transponder, is tunable. Tunable
-         transponders are assumed to be fully tunable to any of the
-         96 channels within DWDM C-band";
-    }
-
-    leaf max-subcarrier-channel-num {
-      type uint8 {
-        range "1..max";
-      }
-      default 1;
-      description
-   "Indicates the maximum number of subcarrier channels for
-         super-channel transponders. When the value equals 1 it
-         represents regular single-channel transponder";
-    }
-  }
-
   /*
    * Data nodes
    */
@@ -201,16 +134,6 @@ module ietf-wson-topology {
         description
           "Container to identify WSON topology type";
       }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te"
-        + "/tet:te-link-attributes"   {
-    when "/nw:networks/nw:network/nw:network-types"
-        +"/tet:te-topology/wson:wson-topology" {
-       description "This augment is only valid for WSON";
-    }
-    description "WSON Link augmentation.";
-    uses wson-link-attributes;
   }
 
   augment "/nw:networks/nw:network/nw:node/nt:termination-point/"
@@ -233,318 +156,11 @@ module ietf-wson-topology {
     uses wson-node-attributes;
   }
 
-  augment "/nw:networks/nw:network/nw:node/tet:te"
-        + "/tet:tunnel-termination-point" {
-    when "/nw:networks/nw:network/nw:network-types"
-       +"/tet:te-topology/wson:wson-topology" {
-      description "This augment is only valid for WSON";
-    }
-    description "WSON tunnel termination point augmentation";
-    uses wson-ttp-attributes;
-  }
-
   /*
-   * Augment TE bandwidth
+   * Augment TE bandwidth is removed to be solved in next version. 
    */
 
-  augment "/nw:networks/nw:network/nw:node/nt:termination-point/"
-        + "tet:te/"
-        + "tet:interface-switching-capability/tet:max-lsp-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment maximum LSP WSON bandwidth of link termination point
-       (LTP)";
-    case wson {
-      uses layer0-types:wson-path-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:te-node-attributes/tet:connectivity-matrices/"
-        + "tet:path-constraints/tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment WSON bandwidth path constraints of
-       connectivity-matrices";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:te-node-attributes/tet:connectivity-matrices/"
-        + "tet:connectivity-matrix/"
-        + "tet:path-constraints/tet:te-bandwidth/tet:technology" {
-    when "../../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment WSON bandwidth path constraints of
-       connectivity-matrix";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:information-source-entry/tet:connectivity-matrices/"
-        + "tet:path-constraints/tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment WSON bandwidth path constraints of
-       connectivity-matrices information-source";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:information-source-entry/tet:connectivity-matrices/"
-        + "tet:connectivity-matrix/"
-        + "tet:path-constraints/tet:te-bandwidth/tet:technology" {
-    when "../../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment WSON bandwidth path constraints of
-       connectivity-matrix information-source";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:tunnel-termination-point/"
-        + "tet:client-layer-adaptation/tet:switching-capability/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment client WSON bandwidth of tunnel termination point
-       (TTP)";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:tunnel-termination-point/"
-        + "tet:local-link-connectivities/tet:path-constraints/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment WSON bandwidth path constraints of
-       local-link-connectivities";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:tunnel-termination-point/"
-        + "tet:local-link-connectivities/"
-        + "tet:local-link-connectivity/tet:path-constraints/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE bandwidth";
-    }
-    description
-      "Augment WSON bandwidth path constraints of
-       local-link-connectivity (LLC)";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:te-link-attributes/"
-        + "tet:interface-switching-capability/tet:max-lsp-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description "Augment maximum LSP WSON bandwidth of TE link";
-    case wson {
-      uses layer0-types:wson-path-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:te-link-attributes/"
-        + "tet:max-link-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment maximum WSON bandwidth of TE link";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:te-link-attributes/"
-        + "tet:max-resv-link-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment maximum reservable WSON bandwidth of
-       TE link";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:te-link-attributes/"
-        + "tet:unreserved-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment unreserved WSON bandwidth of TE Link";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:information-source-entry/"
-        + "tet:interface-switching-capability/"
-        + "tet:max-lsp-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment maximum LSP WSON bandwidth of TE link
-       information-source";
-    case wson {
-      uses layer0-types:wson-path-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:information-source-entry/"
-        + "tet:max-link-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment maximum WSON bandwidth of TE link
-       information-source";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:information-source-entry/"
-        + "tet:max-resv-link-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment maximum reservable WSON bandwidth of TE link
-       information-source";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:information-source-entry/"
-        + "tet:unreserved-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "WSON TE bandwidth";
-    }
-    description
-      "Augment unreserved WSON bandwidth of TE link
-       information-source";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/tet:te/tet:templates/"
-        + "tet:link-template/tet:te-link-attributes/"
-        + "tet:interface-switching-capability/"
-        + "tet:max-lsp-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    description
-      "Augment maximum WSON LSP bandwidth of TE link
-       template";
-    case wson {
-      uses layer0-types:wson-path-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/tet:te/tet:templates/"
-        + "tet:link-template/tet:te-link-attributes/"
-        + "tet:max-link-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    description
-      "Augment maximum WSON bandwidth of TE link template";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/tet:te/tet:templates/"
-        + "tet:link-template/tet:te-link-attributes/"
-        + "tet:max-resv-link-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    description
-      "Augment maximum reservable WSON bandwidth of TE link
-       template";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
-
-  augment "/nw:networks/tet:te/tet:templates/"
-        + "tet:link-template/tet:te-link-attributes/"
-        + "tet:unreserved-bandwidth/"
-        + "tet:te-bandwidth/tet:technology" {
-    description
-      "Augment unreserved WSON bandwidth of TE link template";
-    case wson {
-      uses layer0-types:wson-link-bandwidth;
-    }
-  }
+  
 
   /*
    * Augment TE label.
@@ -559,7 +175,7 @@ module ietf-wson-topology {
     }
     description
       "Augment WSON label restrictions of connectivity-matrices";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -575,7 +191,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions start of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -593,7 +209,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions end of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -610,7 +226,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions step of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -627,7 +243,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -645,7 +261,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay backup path of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -666,7 +282,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-exclude of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -687,7 +303,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-include of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -705,7 +321,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of path-route of
        connectivity-matrices";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -721,7 +337,7 @@ module ietf-wson-topology {
     description
       "Augment ingress WSON label restrictions of
        connectivity-matrix";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -739,7 +355,7 @@ module ietf-wson-topology {
       "Augment ingress WSON label restrictions start of
        connectivity-matrix ";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -758,7 +374,7 @@ module ietf-wson-topology {
       "Augment ingress WSON label restrictions end of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -777,7 +393,7 @@ module ietf-wson-topology {
       "Augment ingress WSON label restrictions step of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -793,7 +409,7 @@ module ietf-wson-topology {
     description
       "Augment egress WSON label restrictions of
        connectivity-matrix";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -811,7 +427,7 @@ module ietf-wson-topology {
       "Augment egress WSON label restrictions start of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -830,7 +446,7 @@ module ietf-wson-topology {
       "Augment egress WSON label restrictions end of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -849,7 +465,7 @@ module ietf-wson-topology {
       "Augment egress WSON label restrictions step of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -868,7 +484,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -887,7 +503,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay backup path of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -906,7 +522,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-exclude of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -926,7 +542,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-include of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -945,7 +561,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of path-route of
        connectivity-matrix";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -960,7 +576,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions of connectivity-matrices
        information-source";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -977,7 +593,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions start of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -995,7 +611,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions end of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1013,7 +629,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions step of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -1030,7 +646,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1047,7 +663,7 @@ module ietf-wson-topology {
       "Augment label hop of underlay backup path of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1067,7 +683,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-exclude of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1087,7 +703,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-include of
        connectivity-matrices information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1105,7 +721,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of path-route of connectivity-matrices
        information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1121,7 +737,7 @@ module ietf-wson-topology {
     description
       "Augment ingress WSON label restrictions of
        connectivity-matrix information-source";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -1139,7 +755,7 @@ module ietf-wson-topology {
       "Augment ingress WSON label restrictions start of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -1157,7 +773,7 @@ module ietf-wson-topology {
       "Augment ingress WSON label restrictions end of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1176,7 +792,7 @@ module ietf-wson-topology {
       "Augment ingress WSON label restrictions step of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -1192,7 +808,7 @@ module ietf-wson-topology {
     description
       "Augment egress WSON label restrictions of connectivity-matrix
        information-source";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -1209,7 +825,7 @@ module ietf-wson-topology {
       "Augment egress WSON label restrictions start of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1227,7 +843,7 @@ module ietf-wson-topology {
       "Augment egress WSON label restrictions end of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1245,7 +861,7 @@ module ietf-wson-topology {
       "Augment egress WSON label restrictions step of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -1263,7 +879,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1281,7 +897,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay backup path of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1302,7 +918,7 @@ module ietf-wson-topology {
       "Augment label hop of route-exclude of connectivity-matrix
        information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1323,7 +939,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-include of
        connectivity-matrix information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1342,7 +958,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of path-route of connectivity-matrix
        information-source";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1357,7 +973,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions of
        local-link-connectivities";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -1375,7 +991,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions start of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1394,7 +1010,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions end of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1413,7 +1029,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions step of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
 
@@ -1431,7 +1047,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1449,7 +1065,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay backup path of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1470,7 +1086,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-exclude of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1491,7 +1107,7 @@ module ietf-wson-topology {
       "Augment label hop of route-include of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1510,7 +1126,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of path-route of
        local-link-connectivities";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1526,7 +1142,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions of
        local-link-connectivity (LLC)";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -1544,7 +1160,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions start of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1563,7 +1179,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions end of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1582,7 +1198,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions step of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -1601,7 +1217,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1620,7 +1236,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay backup path of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1642,7 +1258,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-exclude of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1664,7 +1280,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of route-include of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1684,7 +1300,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of path-route of
        local-link-connectivity (LLC)";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
   augment "/nw:networks/nw:network/nt:link/tet:te/"
@@ -1699,7 +1315,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label hop of underlay primary path of TE link";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1715,7 +1331,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label hop of underlay backup path of TE link";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1728,7 +1344,7 @@ module ietf-wson-topology {
     }
     description
       "Augment WSON label restrictions of TE link";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nt:link/tet:te/"
@@ -1742,7 +1358,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions start of TE link";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1757,7 +1373,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions end of TE link";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1772,7 +1388,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions step of TE link";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -1786,7 +1402,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions of TE link
        information-source";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nt:link/tet:te/"
@@ -1801,7 +1417,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions start of TE link
        information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1817,7 +1433,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions end of TE link
        information-source";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1833,7 +1449,7 @@ module ietf-wson-topology {
       "Augment WSON label restrictions step of TE link
        information-source";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }
   
@@ -1845,7 +1461,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay primary path of TE link
        template";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1857,7 +1473,7 @@ module ietf-wson-topology {
       "Augment WSON label hop of underlay backup path of TE link
        template";
     case wson {
-      uses layer0-types:wson-path-label;
+      uses l0-types:wson-label-hop;
     }
   }
 
@@ -1866,7 +1482,7 @@ module ietf-wson-topology {
         + "tet:label-restrictions/tet:label-restriction" {
     description
       "Augment WSON label restrictions of TE link template";
-    uses layer0-types:layer0-label-restriction;
+    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/tet:te/tet:templates/"
@@ -1876,7 +1492,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions start of TE link template";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1887,7 +1503,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions end of TE link template";
     case wson {
-      uses layer0-types:wson-link-label;
+      uses l0-types:wson-label-start-end;
     }
   }
 
@@ -1898,7 +1514,7 @@ module ietf-wson-topology {
     description
       "Augment WSON label restrictions step of TE link template";
     case wson {
-      uses layer0-types:wson-label-step;
+      uses l0-types:wson-label-step;
     }
   }  
 }
