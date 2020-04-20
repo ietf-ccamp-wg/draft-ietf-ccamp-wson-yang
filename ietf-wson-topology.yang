@@ -83,12 +83,17 @@ module ietf-wson-topology {
   grouping wson-node-attributes {
     description "WSON node attributes";
     container wson-node {
-      description "Candidate type: ROADM or FOADM";
+      presence "The TE node is a WSON node.";
+      description "WSON node attributes";
       leaf is-reconfigurable-node {
         type boolean;
-        description 
-		  "true - ROADM, 
-		   false - FOADM. ";
+        default true;
+        description
+          "Indicates whether the WSON node is reconfigurable:
+           - true: the node is reconfigurable
+             (e.g., it is representing a ROADM node);
+           - false: the node is not reconfigurable
+             (e.g., it is representing a FOADM node).";
       }
     }
   }
