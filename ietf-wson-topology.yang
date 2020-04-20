@@ -93,35 +93,6 @@ module ietf-wson-topology {
     }
   }
 
-  grouping wson-tp-attributes {
-    description "wson-tp-attributes";
-
-    list supported-payload-types {
-      key "index";
-      description
-        "Supported payload types of a TP (Termination Point).
-         The payload type is defined as the generalized PIDs
-         (Payload Identifiers) in GMPLS";
-      leaf index {
-        type uint16;
-        description "payload type index";
-      }
-      leaf payload-type {
-        type string;
-        description "the payload type supported by this client TP";
-        reference
-          "http://www.iana.org/assignments/gmpls-sig-parameters
-           /gmpls-sig-parameters.xhtml";
-      }
-    }
-    leaf client-facing {
-      type boolean;
-      default 'false';
-      description
-        "Indicates if it is a client-facing TP";
-    }
-  }
-
   /*
    * Data nodes
    */
@@ -134,16 +105,6 @@ module ietf-wson-topology {
         description
           "Container to identify WSON topology type";
       }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/nt:termination-point/"
-        + "tet:te" {
-    when "/nw:networks/nw:network/nw:network-types"
-        +"/tet:te-topology/wson:wson-topology" {
-       description "This augment is only valid for WSON";
-    }
-    description "WSON TP attributes";
-    uses wson-tp-attributes;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te"
