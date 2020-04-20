@@ -123,12 +123,6 @@ module ietf-wson-topology {
   }
 
   /*
-   * Augment TE bandwidth is removed to be solved in next version. 
-   */
-
-  
-
-  /*
    * Augment TE label.
    */
 
