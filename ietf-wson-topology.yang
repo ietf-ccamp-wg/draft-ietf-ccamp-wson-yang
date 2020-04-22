@@ -68,7 +68,7 @@ module ietf-wson-topology {
      Legal Provisions Relating to IETF Documents
      (http://trustee.ietf.org/license-info).";
 
-  revision 2020-04-15 {
+  revision 2020-04-20 {
     description
       "Initial Version";
 
