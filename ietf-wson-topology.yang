@@ -80,6 +80,7 @@ module ietf-wson-topology {
   /*
    * Groupings
    */
+
   grouping wson-node-attributes {
     description "WSON node attributes";
     container wson-node {
