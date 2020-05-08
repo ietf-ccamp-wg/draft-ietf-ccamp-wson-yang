@@ -25,8 +25,8 @@ module ietf-wson-topology {
        Traffic Engineering (TE) Topologies";
   }
 
-  /* Note: The RFC Editor will replace YYYY with the number assigned to    
-     the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
+  /* Note: The RFC Editor will replace YYYY with the number assigned
+     to the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
 
   import ietf-layer0-types {
     prefix "l0-types";
@@ -35,8 +35,8 @@ module ietf-wson-topology {
        (Wavelength Switched Optical Networks)";
   }
 
-/* Note: The RFC Editor will replace XXXX with the number assigned to    
-     the RFC once draft-ietf-ccamp-layer0-types becomes an RFC.*/
+  /* Note: The RFC Editor will replace YYYY with the number assigned
+     to the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
     
   organization
     "IETF CCAMP Working Group";
@@ -71,7 +71,7 @@ module ietf-wson-topology {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2020-05-08 {
+  revision 2020-05-09 {
     description
       "Initial Version";
 
@@ -275,7 +275,7 @@ module ietf-wson-topology {
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:path-properties/tet:path-route-objects/"
         + "tet:path-route-object/tet:type/tet:label/tet:label-hop/"
-        + "tet:te-label/tet:technology"{
+        + "tet:te-label/tet:technology" {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
