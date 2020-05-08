@@ -2,17 +2,9 @@ module: ietf-wson-topology
   augment /nw:networks/nw:network/nw:network-types
             /tet:te-topology:
     +--rw wson-topology!
-  augment /nw:networks/nw:network/nt:link/tet:te
-            /tet:te-link-attributes:
-  augment /nw:networks/nw:network/nw:node/nt:termination-point
-            /tet:te:
-    +--rw supported-payload-types* [index]
-    |  +--rw index           uint16
-    |  +--rw payload-type?   string
-    +--rw client-facing?             boolean
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes:
-    +--rw wson-node
+    +--rw wson-node!
        +--rw is-reconfigurable-node?   boolean
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes/tet:connectivity-matrices
@@ -46,9 +38,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes/tet:connectivity-matrices
             /tet:underlay/tet:primary-path/tet:path-element
@@ -164,9 +156,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes/tet:connectivity-matrices
             /tet:connectivity-matrix/tet:to
@@ -203,9 +195,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes/tet:connectivity-matrices
             /tet:connectivity-matrix/tet:underlay
@@ -321,9 +313,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--ro (l0-grid-type)?
           +--:(dwdm)
-          |  +--ro wson-dwdm?   identityref
+          |  +--ro wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--ro wson-cwdm?   identityref
+             +--ro wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry
             /tet:connectivity-matrices/tet:underlay
@@ -443,9 +435,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--ro (l0-grid-type)?
           +--:(dwdm)
-          |  +--ro wson-dwdm?   identityref
+          |  +--ro wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--ro wson-cwdm?   identityref
+             +--ro wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry
             /tet:connectivity-matrices/tet:connectivity-matrix
@@ -482,9 +474,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--ro (l0-grid-type)?
           +--:(dwdm)
-          |  +--ro wson-dwdm?   identityref
+          |  +--ro wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--ro wson-cwdm?   identityref
+             +--ro wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry
             /tet:connectivity-matrices/tet:connectivity-matrix
@@ -604,9 +596,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:tunnel-termination-point
             /tet:local-link-connectivities/tet:underlay
@@ -726,9 +718,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:tunnel-termination-point
             /tet:local-link-connectivities
@@ -873,9 +865,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/nw:network/nt:link/tet:te
             /tet:information-source-entry/tet:label-restrictions
             /tet:label-restriction:
@@ -907,9 +899,9 @@ module: ietf-wson-topology
     +--:(wson)
        +--ro (l0-grid-type)?
           +--:(dwdm)
-          |  +--ro wson-dwdm?   identityref
+          |  +--ro wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--ro wson-cwdm?   identityref
+             +--ro wson-cwdm-channel-spacing?   identityref
   augment /nw:networks/tet:te/tet:templates/tet:link-template
             /tet:te-link-attributes/tet:underlay/tet:primary-path
             /tet:path-element/tet:type/tet:label/tet:label-hop
@@ -969,6 +961,6 @@ module: ietf-wson-topology
     +--:(wson)
        +--rw (l0-grid-type)?
           +--:(dwdm)
-          |  +--rw wson-dwdm?   identityref
+          |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
-             +--rw wson-cwdm?   identityref
+             +--rw wson-cwdm-channel-spacing?   identityref
