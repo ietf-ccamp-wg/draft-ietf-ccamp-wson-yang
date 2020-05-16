@@ -13,266 +13,16 @@ module: ietf-wson-topology
     +--rw priority?    uint8
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:label-restrictions/tet:label-restriction
-            /tet:label-start/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw dwdm-n?   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?   l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:label-restrictions/tet:label-restriction
-            /tet:label-end/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw dwdm-n?   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?   l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:label-restrictions/tet:label-restriction
-            /tet:label-step/tet:technology:
-    +--:(wson)
-       +--rw (l0-grid-type)?
-          +--:(dwdm)
-          |  +--rw wson-dwdm-channel-spacing?   identityref
-          +--:(cwdm)
-             +--rw wson-cwdm-channel-spacing?   identityref
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:underlay/tet:primary-path/tet:path-element/tet:type
-            /tet:label/tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:underlay/tet:backup-path/tet:path-element/tet:type
-            /tet:label/tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:optimizations/tet:algorithm/tet:metric
-            /tet:optimization-metric
-            /tet:explicit-route-exclude-objects
-            /tet:route-object-exclude-object/tet:type/tet:label
-            /tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:optimizations/tet:algorithm/tet:metric
-            /tet:optimization-metric
-            /tet:explicit-route-include-objects
-            /tet:route-object-include-object/tet:type/tet:label
-            /tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:path-properties/tet:path-route-objects
-            /tet:path-route-object/tet:type/tet:label/tet:label-hop
-            /tet:te-label/tet:technology:
-    +--:(wson)
-       +--ro (grid-type)?
-          +--:(dwdm)
-          |  +--ro (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--ro dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--ro subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--ro cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
             /tet:connectivity-matrix/tet:from/tet:label-restrictions
             /tet:label-restriction:
     +--rw grid-type?   identityref
     +--rw priority?    uint8
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:from/tet:label-restrictions
-            /tet:label-restriction/tet:label-start/tet:te-label
-            /tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw dwdm-n?   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?   l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:from/tet:label-restrictions
-            /tet:label-restriction/tet:label-end/tet:te-label
-            /tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw dwdm-n?   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?   l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:from/tet:label-restrictions
-            /tet:label-restriction/tet:label-step/tet:technology:
-    +--:(wson)
-       +--rw (l0-grid-type)?
-          +--:(dwdm)
-          |  +--rw wson-dwdm-channel-spacing?   identityref
-          +--:(cwdm)
-             +--rw wson-cwdm-channel-spacing?   identityref
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
             /tet:connectivity-matrix/tet:to/tet:label-restrictions
             /tet:label-restriction:
     +--rw grid-type?   identityref
     +--rw priority?    uint8
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:to/tet:label-restrictions
-            /tet:label-restriction/tet:label-start/tet:te-label
-            /tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw dwdm-n?   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?   l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:to/tet:label-restrictions
-            /tet:label-restriction/tet:label-end/tet:te-label
-            /tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw dwdm-n?   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?   l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:to/tet:label-restrictions
-            /tet:label-restriction/tet:label-step/tet:technology:
-    +--:(wson)
-       +--rw (l0-grid-type)?
-          +--:(dwdm)
-          |  +--rw wson-dwdm-channel-spacing?   identityref
-          +--:(cwdm)
-             +--rw wson-cwdm-channel-spacing?   identityref
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:underlay/tet:primary-path
-            /tet:path-element/tet:type/tet:label/tet:label-hop
-            /tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:underlay/tet:backup-path
-            /tet:path-element/tet:type/tet:label/tet:label-hop
-            /tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:optimizations/tet:algorithm
-            /tet:metric/tet:optimization-metric
-            /tet:explicit-route-exclude-objects
-            /tet:route-object-exclude-object/tet:type/tet:label
-            /tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:optimizations/tet:algorithm
-            /tet:metric/tet:optimization-metric
-            /tet:explicit-route-include-objects
-            /tet:route-object-include-object/tet:type/tet:label
-            /tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--rw (grid-type)?
-          +--:(dwdm)
-          |  +--rw (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--rw dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:te-node-attributes/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:path-properties
-            /tet:path-route-objects/tet:path-route-object/tet:type
-            /tet:label/tet:label-hop/tet:te-label/tet:technology:
-    +--:(wson)
-       +--ro (grid-type)?
-          +--:(dwdm)
-          |  +--ro (single-or-super-channel)?
-          |     +--:(single)
-          |     |  +--ro dwdm-n?              l0-types:dwdm-n
-          |     +--:(super)
-          |        +--ro subcarrier-dwdm-n*   l0-types:dwdm-n
-          +--:(cwdm)
-             +--ro cwdm-n?                    l0-types:cwdm-n
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry/tet:connectivity-matrices
             /tet:label-restrictions/tet:label-restriction:
@@ -280,6 +30,296 @@ module: ietf-wson-topology
     +--ro priority?    uint8
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:from/tet:label-restrictions
+            /tet:label-restriction:
+    +--ro grid-type?   identityref
+    +--ro priority?    uint8
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:information-source-entry/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:to/tet:label-restrictions
+            /tet:label-restriction:
+    +--ro grid-type?   identityref
+    +--ro priority?    uint8
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:tunnel-termination-point
+            /tet:local-link-connectivities/tet:label-restrictions
+            /tet:label-restriction:
+    +--rw grid-type?   identityref
+    +--rw priority?    uint8
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:tunnel-termination-point
+            /tet:local-link-connectivities
+            /tet:local-link-connectivity/tet:label-restrictions
+            /tet:label-restriction:
+    +--rw grid-type?   identityref
+    +--rw priority?    uint8
+  augment /nw:networks/nw:network/nt:link/tet:te
+            /tet:te-link-attributes/tet:label-restrictions
+            /tet:label-restriction:
+    +--rw grid-type?   identityref
+    +--rw priority?    uint8
+  augment /nw:networks/nw:network/nt:link/tet:te
+            /tet:information-source-entry/tet:label-restrictions
+            /tet:label-restriction:
+    +--ro grid-type?   identityref
+    +--ro priority?    uint8
+  augment /nw:networks/tet:te/tet:templates/tet:link-template
+            /tet:te-link-attributes/tet:label-restrictions
+            /tet:label-restriction:
+    +--rw grid-type?   identityref
+    +--rw priority?    uint8
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:label-restrictions/tet:label-restriction
+            /tet:label-start/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw dwdm-n?   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?   l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:label-restrictions/tet:label-restriction
+            /tet:label-end/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw dwdm-n?   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?   l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:label-restrictions/tet:label-restriction
+            /tet:label-step/tet:technology:
+    +--:(wson)
+       +--rw (l0-grid-type)?
+          +--:(dwdm)
+          |  +--rw wson-dwdm-channel-spacing?   identityref
+          +--:(cwdm)
+             +--rw wson-cwdm-channel-spacing?   identityref
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:underlay/tet:primary-path/tet:path-element/tet:type
+            /tet:label/tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:underlay/tet:backup-path/tet:path-element/tet:type
+            /tet:label/tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:optimizations/tet:algorithm/tet:metric
+            /tet:optimization-metric
+            /tet:explicit-route-exclude-objects
+            /tet:route-object-exclude-object/tet:type/tet:label
+            /tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:optimizations/tet:algorithm/tet:metric
+            /tet:optimization-metric
+            /tet:explicit-route-include-objects
+            /tet:route-object-include-object/tet:type/tet:label
+            /tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:path-properties/tet:path-route-objects
+            /tet:path-route-object/tet:type/tet:label/tet:label-hop
+            /tet:te-label/tet:technology:
+    +--:(wson)
+       +--ro (grid-type)?
+          +--:(dwdm)
+          |  +--ro (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--ro dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--ro subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--ro cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:from/tet:label-restrictions
+            /tet:label-restriction/tet:label-start/tet:te-label
+            /tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw dwdm-n?   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?   l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:from/tet:label-restrictions
+            /tet:label-restriction/tet:label-end/tet:te-label
+            /tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw dwdm-n?   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?   l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:from/tet:label-restrictions
+            /tet:label-restriction/tet:label-step/tet:technology:
+    +--:(wson)
+       +--rw (l0-grid-type)?
+          +--:(dwdm)
+          |  +--rw wson-dwdm-channel-spacing?   identityref
+          +--:(cwdm)
+             +--rw wson-cwdm-channel-spacing?   identityref
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:to/tet:label-restrictions
+            /tet:label-restriction/tet:label-start/tet:te-label
+            /tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw dwdm-n?   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?   l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:to/tet:label-restrictions
+            /tet:label-restriction/tet:label-end/tet:te-label
+            /tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw dwdm-n?   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?   l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:to/tet:label-restrictions
+            /tet:label-restriction/tet:label-step/tet:technology:
+    +--:(wson)
+       +--rw (l0-grid-type)?
+          +--:(dwdm)
+          |  +--rw wson-dwdm-channel-spacing?   identityref
+          +--:(cwdm)
+             +--rw wson-cwdm-channel-spacing?   identityref
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:underlay/tet:primary-path
+            /tet:path-element/tet:type/tet:label/tet:label-hop
+            /tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:underlay/tet:backup-path
+            /tet:path-element/tet:type/tet:label/tet:label-hop
+            /tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:optimizations/tet:algorithm
+            /tet:metric/tet:optimization-metric
+            /tet:explicit-route-exclude-objects
+            /tet:route-object-exclude-object/tet:type/tet:label
+            /tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:optimizations/tet:algorithm
+            /tet:metric/tet:optimization-metric
+            /tet:explicit-route-include-objects
+            /tet:route-object-include-object/tet:type/tet:label
+            /tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--rw (grid-type)?
+          +--:(dwdm)
+          |  +--rw (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--rw dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--rw cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:te-node-attributes/tet:connectivity-matrices
+            /tet:connectivity-matrix/tet:path-properties
+            /tet:path-route-objects/tet:path-route-object/tet:type
+            /tet:label/tet:label-hop/tet:te-label/tet:technology:
+    +--:(wson)
+       +--ro (grid-type)?
+          +--:(dwdm)
+          |  +--ro (single-or-super-channel)?
+          |     +--:(single)
+          |     |  +--ro dwdm-n?              l0-types:dwdm-n
+          |     +--:(super)
+          |        +--ro subcarrier-dwdm-n*   l0-types:dwdm-n
+          +--:(cwdm)
+             +--ro cwdm-n?                    l0-types:cwdm-n
+  augment /nw:networks/nw:network/nw:node/tet:te
+            /tet:information-source-entry/tet:connectivity-matrices
             /tet:label-restrictions/tet:label-restriction
             /tet:label-start/tet:te-label/tet:technology:
     +--:(wson)
@@ -388,12 +428,6 @@ module: ietf-wson-topology
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry/tet:connectivity-matrices
             /tet:connectivity-matrix/tet:from/tet:label-restrictions
-            /tet:label-restriction:
-    +--ro grid-type?   identityref
-    +--ro priority?    uint8
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:information-source-entry/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:from/tet:label-restrictions
             /tet:label-restriction/tet:label-start/tet:te-label
             /tet:technology:
     +--:(wson)
@@ -423,12 +457,6 @@ module: ietf-wson-topology
           |  +--ro wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
              +--ro wson-cwdm-channel-spacing?   identityref
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:information-source-entry/tet:connectivity-matrices
-            /tet:connectivity-matrix/tet:to/tet:label-restrictions
-            /tet:label-restriction:
-    +--ro grid-type?   identityref
-    +--ro priority?    uint8
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:information-source-entry/tet:connectivity-matrices
             /tet:connectivity-matrix/tet:to/tet:label-restrictions
@@ -540,12 +568,6 @@ module: ietf-wson-topology
           |        +--ro subcarrier-dwdm-n*   l0-types:dwdm-n
           +--:(cwdm)
              +--ro cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:tunnel-termination-point
-            /tet:local-link-connectivities/tet:label-restrictions
-            /tet:label-restriction:
-    +--rw grid-type?   identityref
-    +--rw priority?    uint8
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:tunnel-termination-point
             /tet:local-link-connectivities/tet:label-restrictions
@@ -657,13 +679,6 @@ module: ietf-wson-topology
           |        +--ro subcarrier-dwdm-n*   l0-types:dwdm-n
           +--:(cwdm)
              +--ro cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/nw:network/nw:node/tet:te
-            /tet:tunnel-termination-point
-            /tet:local-link-connectivities
-            /tet:local-link-connectivity/tet:label-restrictions
-            /tet:label-restriction:
-    +--rw grid-type?   identityref
-    +--rw priority?    uint8
   augment /nw:networks/nw:network/nw:node/tet:te
             /tet:tunnel-termination-point
             /tet:local-link-connectivities
@@ -813,11 +828,6 @@ module: ietf-wson-topology
              +--rw cwdm-n?                    l0-types:cwdm-n
   augment /nw:networks/nw:network/nt:link/tet:te
             /tet:te-link-attributes/tet:label-restrictions
-            /tet:label-restriction:
-    +--rw grid-type?   identityref
-    +--rw priority?    uint8
-  augment /nw:networks/nw:network/nt:link/tet:te
-            /tet:te-link-attributes/tet:label-restrictions
             /tet:label-restriction/tet:label-start/tet:te-label
             /tet:technology:
     +--:(wson)
@@ -845,11 +855,6 @@ module: ietf-wson-topology
           |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
              +--rw wson-cwdm-channel-spacing?   identityref
-  augment /nw:networks/nw:network/nt:link/tet:te
-            /tet:information-source-entry/tet:label-restrictions
-            /tet:label-restriction:
-    +--ro grid-type?   identityref
-    +--ro priority?    uint8
   augment /nw:networks/nw:network/nt:link/tet:te
             /tet:information-source-entry/tet:label-restrictions
             /tet:label-restriction/tet:label-start/tet:te-label
@@ -907,11 +912,6 @@ module: ietf-wson-topology
           |        +--rw subcarrier-dwdm-n*   l0-types:dwdm-n
           +--:(cwdm)
              +--rw cwdm-n?                    l0-types:cwdm-n
-  augment /nw:networks/tet:te/tet:templates/tet:link-template
-            /tet:te-link-attributes/tet:label-restrictions
-            /tet:label-restriction:
-    +--rw grid-type?   identityref
-    +--rw priority?    uint8
   augment /nw:networks/tet:te/tet:templates/tet:link-template
             /tet:te-link-attributes/tet:label-restrictions
             /tet:label-restriction/tet:label-start/tet:te-label
