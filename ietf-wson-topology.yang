@@ -81,28 +81,6 @@ module ietf-wson-topology {
   }
 
   /*
-   * Groupings
-   */
-
-  grouping wson-node-attributes {
-    description "WSON node attributes";
-    container wson-node {
-      presence "The TE node is a WSON node.";
-      description "WSON node attributes";
-      leaf is-reconfigurable-node {
-        type boolean;
-        default true;
-        description
-          "Indicates whether the WSON node is reconfigurable:
-           - true: the node is reconfigurable
-             (e.g., it is representing a ROADM node);
-           - false: the node is not reconfigurable
-             (e.g., it is representing a FOADM node).";
-      }
-    }
-  }
-
-  /*
    * Data nodes
    */
 
@@ -127,7 +105,20 @@ module ietf-wson-topology {
        WSON topology type.";
     }
     description "Augment TE node attributes.";
-    uses wson-node-attributes;
+    container wson-node {
+      presence "The TE node is a WSON node.";
+      description "WSON node attributes";
+      leaf is-reconfigurable-node {
+        type boolean;
+        default true;
+        description
+          "Indicates whether the WSON node is reconfigurable:
+           - true: the node is reconfigurable
+             (e.g., it is representing a ROADM node);
+           - false: the node is not reconfigurable
+             (e.g., it is representing a FOADM node).";
+      }
+    }
   }
 
   /*
