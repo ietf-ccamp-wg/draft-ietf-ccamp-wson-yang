@@ -21,22 +21,21 @@ module ietf-wson-topology {
   import ietf-te-topology {
     prefix "tet";
     reference
-      "RFC YYYY: YANG Data Model for
+      "RFC 8795: YANG Data Model for
        Traffic Engineering (TE) Topologies";
   }
 
-  /* Note: The RFC Editor will replace YYYY with the number assigned to    
-     the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
+  /* Note: The RFC Editor will replace YYYY with the number assigned
+     to the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
 
   import ietf-layer0-types {
     prefix "l0-types";
     reference
-      "RFC XXXX: A YANG Data Model for WSON
-       (Wavelength Switched Optical Networks)";
+      "RFC XXXX: A YANG Data Model for Layer 0 Types";
   }
 
-/* Note: The RFC Editor will replace XXXX with the number assigned to    
-     the RFC once draft-ietf-ccamp-layer0-types becomes an RFC.*/
+/* Note: The RFC Editor will replace XXXX with the number assigned
+   to the RFC once draft-ietf-ccamp-layer0-types becomes an RFC.*/
     
   organization
     "IETF CCAMP Working Group";
@@ -56,7 +55,7 @@ module ietf-wson-topology {
      technology-specific YANG model augmenting the generic TE
      topology module (ietf-te-topology) based on the information 
      model developed in RFC 7446 and the two encoding documents
-     RFC 7579.
+     RFC 7579 and RFC 7581.
 
      Copyright (c) 2020 IETF Trust and the persons identified
      as authors of the code.  All rights reserved.
@@ -71,7 +70,7 @@ module ietf-wson-topology {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2020-05-19 {
+  revision 2020-09-21 {
     description
       "Initial Version";
 
@@ -81,11 +80,30 @@ module ietf-wson-topology {
   }
 
   /*
-   * Groupings
+   * Data nodes
    */
 
-  grouping wson-node-attributes {
-    description "WSON node attributes";
+  augment "/nw:networks/nw:network/nw:network-types"
+        + "/tet:te-topology" {
+    description
+      "Augment network types to define WSON topology type.";
+    container wson-topology {
+      presence
+        "Its presence identifies the WSON topology type.";
+      description
+        "Introduce new network type for WSON topology.";
+    }
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te"
+        + "/tet:te-node-attributes" {
+    when "/nw:networks/nw:network/nw:network-types"
+       + "/tet:te-topology/wson:wson-topology" {
+      description
+      "Augmentation parameters apply only for networks with
+       WSON topology type.";
+    }
+    description "Augment TE node attributes.";
     container wson-node {
       presence "The TE node is a WSON node.";
       description "WSON node attributes";
@@ -94,40 +112,16 @@ module ietf-wson-topology {
         default true;
         description
           "Indicates whether the WSON node is reconfigurable:
-           - true: the node is reconfigurable
-             (e.g., it is representing a ROADM node);
-           - false: the node is not reconfigurable
-             (e.g., it is representing a FOADM node).";
+           - true: the node is reconfigurable, i.e.,
+		     it is representing a ROADM node;
+           - false: the node is not reconfigurable, i.e., 
+             it is representing a FOADM node.";
       }
     }
   }
 
   /*
-   * Data nodes
-   */
-
-  augment "/nw:networks/nw:network/nw:network-types"
-   + "/tet:te-topology" {
-      description "wson-topology augmented";
-      container wson-topology {
-        presence "indicates a topology of WSON";
-        description
-          "Container to identify WSON topology type";
-      }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te"
-        + "/tet:te-node-attributes" {
-    when "/nw:networks/nw:network/nw:network-types"
-       +"/tet:te-topology/wson:wson-topology" {
-       description "This augment is only valid for WSON";
-    }
-    description "WSON Node augmentation";
-    uses wson-node-attributes;
-  }
-
-  /*
-   * Augment TE label.
+   * Augment TE label range information
    */
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -135,12 +129,169 @@ module ietf-wson-topology {
         + "tet:label-restrictions/tet:label-restriction" {
     when "../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions of connectivity-matrices";
+      "Augment TE label range information for the TE node
+       connectivity matrices.";
     uses l0-types:l0-label-range-info;
   }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:te-node-attributes/tet:connectivity-matrices/"
+        + "tet:connectivity-matrix/tet:from/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the source LTP
+       of the connectivity matrix entry.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:te-node-attributes/tet:connectivity-matrices/"
+        + "tet:connectivity-matrix/tet:to/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the destination LTP
+       of the connectivity matrix entry.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:information-source-entry/"
+        + "tet:connectivity-matrices/tet:label-restrictions/"
+        + "tet:label-restriction" {
+    when "../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the TE node
+       connectivity matrices information source.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:information-source-entry/tet:connectivity-matrices/"
+        + "tet:connectivity-matrix/"
+        + "tet:from/tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the source LTP
+       of the connectivity matrix entry information source.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:information-source-entry/tet:connectivity-matrices/"
+        + "tet:connectivity-matrix/"
+        + "tet:to/tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the destination LTP
+       of the connectivity matrix entry information source.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:tunnel-termination-point/"
+        + "tet:local-link-connectivities/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the TTP
+       Local Link Connectivities.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nw:node/tet:te/"
+        + "tet:tunnel-termination-point/"
+        + "tet:local-link-connectivities/"
+        + "tet:local-link-connectivity/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the TTP
+       Local Link Connectivity entry.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nt:link/tet:te/"
+        + "tet:te-link-attributes/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the TE link.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/nw:network/nt:link/tet:te/"
+        + "tet:information-source-entry/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    when "../../../../../nw:network-types/tet:te-topology/"
+       + "wson:wson-topology" {
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
+    }
+    description
+      "Augment TE label range information for the TE link
+       information source.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  augment "/nw:networks/tet:te/tet:templates/"
+        + "tet:link-template/tet:te-link-attributes/"
+        + "tet:label-restrictions/tet:label-restriction" {
+    description
+      "Augment TE label range information for the TE link template.";
+    uses l0-types:l0-label-range-info;
+  }
+
+  /*
+   * Augment TE label
+   */
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
@@ -149,11 +300,13 @@ module ietf-wson-topology {
         + "tet:te-label/tet:technology" {
     when "../../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions start of
-       connectivity-matrices";
+      "Augment TE label range start for the TE node
+       connectivity matrices";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -164,35 +317,39 @@ module ietf-wson-topology {
         + "tet:label-restrictions/"
         + "tet:label-restriction/tet:label-end/"
         + "tet:te-label/tet:technology" {
-    when "../../../../../../../../"
-       + "nw:network-types/tet:te-topology/"
+    when "../../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions end of
-       connectivity-matrices";
+      "Augment TE label range end for the TE node
+       connectivity matrices";
     case wson {
       uses l0-types:wson-label-start-end;
     }
   }
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:label-restrictions/"
         + "tet:label-restriction/tet:label-step/"
         + "tet:technology" {
-    when "../../../../../../../"
-       + "nw:network-types/tet:te-topology/"
+    when "../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions step of
-       connectivity-matrices";
+      "Augment TE label range step for the TE node
+       connectivity matrices";
     case wson {
       uses l0-types:wson-label-step;
     }
   }
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:underlay/tet:primary-path/tet:path-element/"
@@ -201,11 +358,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of
-       connectivity-matrices";
+      "Augment TE label hop for the underlay primary path of the
+       TE node connectivity matrices";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -219,11 +378,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay backup path of
-       connectivity-matrices";
+      "Augment TE label hop for the underlay backup path of the
+       TE node connectivity matrices";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -240,11 +401,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-exclude of
-       connectivity-matrices";
+      "Augment TE label hop for the explicit route objects excluded
+       by the path computation of the TE node connectivity
+       matrices";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -261,11 +425,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-include of
-       connectivity-matrices";
+      "Augment TE label hop for the explicit route objects included
+       by the path computation of the TE node connectivity
+       matrices";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -275,15 +442,17 @@ module ietf-wson-topology {
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:path-properties/tet:path-route-objects/"
         + "tet:path-route-object/tet:type/tet:label/tet:label-hop/"
-        + "tet:te-label/tet:technology"{
+        + "tet:te-label/tet:technology" {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of path-route of
-       connectivity-matrices";
+      "Augment TE label hop for the computed path route objects
+       of the TE node connectivity matrices";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -292,32 +461,19 @@ module ietf-wson-topology {
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/tet:from/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../../../../"
-       + "nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment ingress WSON label restrictions of
-       connectivity-matrix";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:te-node-attributes/tet:connectivity-matrices/"
-        + "tet:connectivity-matrix/tet:from/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-start/"
         + "tet:te-label/tet:technology" {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment ingress WSON label restrictions start of
-       connectivity-matrix ";
+      "Augment TE label range start for the source LTP
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -332,11 +488,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment ingress WSON label restrictions end of
-       connectivity-matrix";
+      "Augment TE label range end for the source LTP
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -351,11 +509,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment ingress WSON label restrictions step of
-       connectivity-matrix";
+      "Augment TE label range step for the source LTP
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -364,32 +524,19 @@ module ietf-wson-topology {
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/tet:to/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../../../../"
-       + "nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment egress WSON label restrictions of
-       connectivity-matrix";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:te-node-attributes/tet:connectivity-matrices/"
-        + "tet:connectivity-matrix/tet:to/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-start/"
         + "tet:te-label/tet:technology" {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment egress WSON label restrictions start of
-       connectivity-matrix";
+      "Augment TE label range start for the destination LTP
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -404,11 +551,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment egress WSON label restrictions end of
-       connectivity-matrix";
+      "Augment TE label range end for the destination LTP
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -423,11 +572,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment egress WSON label restrictions step of
-       connectivity-matrix";
+      "Augment TE label range step for the destination LTP
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -442,11 +593,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of
-       connectivity-matrix";
+      "Augment TE label hop for the underlay primary path
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -461,15 +614,18 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay backup path of
-       connectivity-matrix";
+      "Augment TE label hop for the underlay backup path
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
   }
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/tet:optimizations/"
@@ -480,11 +636,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-exclude of
-       connectivity-matrix";
+      "Augment TE label hop for the explicit route objects excluded
+       by the path computation of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -500,11 +658,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-include of
-       connectivity-matrix";
+      "Augment TE label hop for the explicit route objects included
+       by the path computation of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -519,28 +679,16 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of path-route of
-       connectivity-matrix";
+      "Augment TE label hop for the computed path route objects
+       of the connectivity matrix entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:information-source-entry/"
-        + "tet:connectivity-matrices/tet:label-restrictions/"
-        + "tet:label-restriction" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment WSON label restrictions of connectivity-matrices
-       information-source";
-    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -551,11 +699,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions start of
-       connectivity-matrices information-source";
+      "Augment TE label range start for the TE node connectivity
+       matrices information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -569,11 +719,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions end of
-       connectivity-matrices information-source";
+      "Augment TE label range end for the TE node connectivity
+       matrices information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -587,11 +739,13 @@ module ietf-wson-topology {
     when "../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions step of
-       connectivity-matrices information-source";
+      "Augment TE label range step for the TE node connectivity
+       matrices information source.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -604,11 +758,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of
-       connectivity-matrices information-source";
+      "Augment TE label hop for the underlay primary path
+       of the TE node connectivity matrices of the information
+       source entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -621,11 +778,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment label hop of underlay backup path of
-       connectivity-matrices information-source";
+      "Augment TE label hop for the underlay backup path
+       of the TE node connectivity matrices of the information
+       source entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -641,11 +801,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-exclude of
-       connectivity-matrices information-source";
+      "Augment TE label hop for the explicit route objects excluded
+       by the path computation of the TE node connectivity matrices
+       information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -661,11 +824,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-include of
-       connectivity-matrices information-source";
+      "Augment TE label hop for the explicit route objects included
+       by the path computation of the TE node connectivity matrices
+       information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -679,11 +845,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of path-route of connectivity-matrices
-       information-source";
+      "Augment TE label hop for the computed path route objects
+       of the TE node connectivity matrices information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -692,32 +860,19 @@ module ietf-wson-topology {
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:information-source-entry/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/"
-        + "tet:from/tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../../../../"
-       + "nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment ingress WSON label restrictions of
-       connectivity-matrix information-source";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:information-source-entry/tet:connectivity-matrices/"
-        + "tet:connectivity-matrix/"
         + "tet:from/tet:label-restrictions/"
         + "tet:label-restriction/"
         + "tet:label-start/tet:te-label/tet:technology" {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment ingress WSON label restrictions start of
-       connectivity-matrix information-source";
+      "Augment TE label range start for the source LTP
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -731,11 +886,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment ingress WSON label restrictions end of
-       connectivity-matrix information-source";
+      "Augment TE label range end for the source LTP
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -750,11 +907,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment ingress WSON label restrictions step of
-       connectivity-matrix information-source";
+      "Augment TE label range step for the source LTP
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -763,31 +922,18 @@ module ietf-wson-topology {
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:information-source-entry/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/"
-        + "tet:to/tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../../../../"
-       + "nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment egress WSON label restrictions of connectivity-matrix
-       information-source";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:information-source-entry/tet:connectivity-matrices/"
-        + "tet:connectivity-matrix/"
         + "tet:to/tet:label-restrictions/tet:label-restriction/"
         + "tet:label-start/tet:te-label/tet:technology" {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment egress WSON label restrictions start of
-       connectivity-matrix information-source";
+      "Augment TE label range start for the destination LTP
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -801,11 +947,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment egress WSON label restrictions end of
-       connectivity-matrix information-source";
+      "Augment TE label range end for the destination LTP
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -819,11 +967,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment egress WSON label restrictions step of
-       connectivity-matrix information-source";
+      "Augment TE label range step for the destination LTP
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -837,11 +987,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of
-       connectivity-matrix information-source";
+      "Augment TE label hop for the underlay primary path
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -855,11 +1007,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay backup path of
-       connectivity-matrix information-source";
+      "Augment TE label hop for the underlay backup path
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -876,11 +1030,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment label hop of route-exclude of connectivity-matrix
-       information-source";
+      "Augment TE label hop for the explicit route objects excluded
+       by the path computation of the connectivity matrix entry
+       information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -897,11 +1054,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-include of
-       connectivity-matrix information-source";
+      "Augment TE label hop for the explicit route objects included
+       by the path computation of the connectivity matrix entry
+       information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -916,28 +1076,16 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of path-route of connectivity-matrix
-       information-source";
+      "Augment TE label hop for the computed path route objects
+       of the connectivity matrix entry information source.";
     case wson {
       uses l0-types:wson-label-hop;
     }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:tunnel-termination-point/"
-        + "tet:local-link-connectivities/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment WSON label restrictions of
-       local-link-connectivities";
-    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -949,11 +1097,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions start of
-       local-link-connectivities";
+      "Augment TE label range start for the TTP
+       Local Link Connectivities.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -968,11 +1118,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions end of
-       local-link-connectivities";
+      "Augment TE label range end for the TTP
+       Local Link Connectivities.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -987,11 +1139,13 @@ module ietf-wson-topology {
     when "../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions step of
-       local-link-connectivities";
+      "Augment TE label range step for the TTP
+       Local Link Connectivities.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -1005,11 +1159,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of
-       local-link-connectivities";
+      "Augment TE label hop for the underlay primary path
+       of the TTP Local Link Connectivities.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1023,11 +1179,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay backup path of
-       local-link-connectivities";
+      "Augment TE label hop for the underlay backup path
+       of the TTP Local Link Connectivities.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1044,11 +1202,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-exclude of
-       local-link-connectivities";
+      "Augment TE label hop for the explicit route objects excluded
+       by the path computation of the TTP Local Link
+       Connectivities.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1065,11 +1226,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment label hop of route-include of
-       local-link-connectivities";
+      "Augment TE label hop for the explicit route objects included
+       by the path computation of the TTP Local Link
+       Connectivities.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1084,29 +1248,16 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of path-route of
-       local-link-connectivities";
+      "Augment TE label hop for the computed path route objects
+       of the TTP Local Link Connectivities.";
     case wson {
       uses l0-types:wson-label-hop;
     }
-  }
-
-  augment "/nw:networks/nw:network/nw:node/tet:te/"
-        + "tet:tunnel-termination-point/"
-        + "tet:local-link-connectivities/"
-        + "tet:local-link-connectivity/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment WSON label restrictions of
-       local-link-connectivity (LLC)";
-    uses l0-types:l0-label-range-info;
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
@@ -1118,11 +1269,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions start of
-       local-link-connectivity (LLC)";
+      "Augment TE label range start for the TTP
+       Local Link Connectivity entry.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1137,11 +1290,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions end of
-       local-link-connectivity (LLC)";
+      "Augment TE label range end for the TTP
+       Local Link Connectivity entry.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1156,11 +1311,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions step of
-       local-link-connectivity (LLC)";
+      "Augment TE label range step for the TTP
+       Local Link Connectivity entry.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -1175,11 +1332,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of
-       local-link-connectivity (LLC)";
+      "Augment TE label hop for the underlay primary path
+       of the TTP Local Link Connectivity entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1194,11 +1353,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay backup path of
-       local-link-connectivity (LLC)";
+      "Augment TE label hop for the underlay backup path
+       of the TTP Local Link Connectivity entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1216,11 +1377,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-exclude of
-       local-link-connectivity (LLC)";
+      "Augment TE label hop for the explicit route objects excluded
+       by the path computation of the TTP Local Link
+       Connectivity entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1238,11 +1402,14 @@ module ietf-wson-topology {
     when "../../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of route-include of
-       local-link-connectivity (LLC)";
+      "Augment TE label hop for the explicit route objects included
+       by the path computation of the TTP Local Link
+       Connectivity entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1258,11 +1425,13 @@ module ietf-wson-topology {
     when "../../../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of path-route of
-       local-link-connectivity (LLC)";
+      "Augment TE label hop for the computed path route objects
+       of the TTP Local Link Connectivity entry.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1274,10 +1443,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay primary path of TE link";
+      "Augment TE label hop for the underlay primary path
+       of the TE link.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1290,10 +1462,13 @@ module ietf-wson-topology {
     when "../../../../../../../../"
        + "nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label hop of underlay backup path of TE link";
+      "Augment TE label hop for the underlay backup path
+       of the TE link.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1301,26 +1476,16 @@ module ietf-wson-topology {
 
   augment "/nw:networks/nw:network/nt:link/tet:te/"
         + "tet:te-link-attributes/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment WSON label restrictions of TE link";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:te-link-attributes/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-start/tet:te-label/tet:technology" {
     when "../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions start of TE link";
+      "Augment TE label range start for the TE link.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1332,10 +1497,12 @@ module ietf-wson-topology {
         + "tet:label-end/tet:te-label/tet:technology" {
     when "../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions end of TE link";
+      "Augment TE label range end for the TE link.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1347,10 +1514,12 @@ module ietf-wson-topology {
         + "tet:label-step/tet:technology" {
     when "../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions step of TE link";
+      "Augment TE label range step for the TE link.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -1358,28 +1527,17 @@ module ietf-wson-topology {
   
   augment "/nw:networks/nw:network/nt:link/tet:te/"
         + "tet:information-source-entry/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    when "../../../../../nw:network-types/tet:te-topology/"
-       + "wson:wson-topology" {
-      description "Augment WSON TE label";
-    }
-    description
-      "Augment WSON label restrictions of TE link
-       information-source";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/nw:network/nt:link/tet:te/"
-        + "tet:information-source-entry/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-start/tet:te-label/tet:technology" {
     when "../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions start of TE link
-       information-source";
+      "Augment TE label range start for the TE link
+       information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1391,11 +1549,13 @@ module ietf-wson-topology {
         + "tet:label-end/tet:te-label/tet:technology" {
     when "../../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions end of TE link
-       information-source";
+      "Augment TE label range end for the TE link
+       information source.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1407,11 +1567,13 @@ module ietf-wson-topology {
         + "tet:label-step/tet:technology" {
     when "../../../../../../nw:network-types/tet:te-topology/"
        + "wson:wson-topology" {
-      description "Augment WSON TE label";
+      description
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
     description
-      "Augment WSON label restrictions step of TE link
-       information-source";
+      "Augment TE label range step for the TE link
+       information source.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -1422,8 +1584,8 @@ module ietf-wson-topology {
         + "tet:underlay/tet:primary-path/tet:path-element/tet:type/"
         + "tet:label/tet:label-hop/tet:te-label/tet:technology" {
     description
-      "Augment WSON label hop of underlay primary path of TE link
-       template";
+      "Augment TE label hop for the underlay primary path
+       of the TE link template.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1434,8 +1596,8 @@ module ietf-wson-topology {
         + "tet:underlay/tet:backup-path/tet:path-element/tet:type/"
         + "tet:label/tet:label-hop/tet:te-label/tet:technology" {
     description
-      "Augment WSON label hop of underlay backup path of TE link
-       template";
+      "Augment TE label hop for the underlay backup path
+       of the TE link template.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -1443,18 +1605,10 @@ module ietf-wson-topology {
 
   augment "/nw:networks/tet:te/tet:templates/"
         + "tet:link-template/tet:te-link-attributes/"
-        + "tet:label-restrictions/tet:label-restriction" {
-    description
-      "Augment WSON label restrictions of TE link template";
-    uses l0-types:l0-label-range-info;
-  }
-
-  augment "/nw:networks/tet:te/tet:templates/"
-        + "tet:link-template/tet:te-link-attributes/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-start/tet:te-label/tet:technology" {
     description
-      "Augment WSON label restrictions start of TE link template";
+      "Augment TE label range start for the TE link template.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1465,7 +1619,7 @@ module ietf-wson-topology {
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-end/tet:te-label/tet:technology" {
     description
-      "Augment WSON label restrictions end of TE link template";
+      "Augment TE label range end for the TE link template.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -1476,9 +1630,9 @@ module ietf-wson-topology {
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-step/tet:technology" {
     description
-      "Augment WSON label restrictions step of TE link template";
+      "Augment TE label range step for the TE link template.";
     case wson {
       uses l0-types:wson-label-step;
     }
-  }  
+  }
 }

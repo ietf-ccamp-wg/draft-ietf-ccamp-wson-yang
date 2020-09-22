@@ -940,4 +940,3 @@ module: ietf-wson-topology
           |  +--rw wson-dwdm-channel-spacing?   identityref
           +--:(cwdm)
              +--rw wson-cwdm-channel-spacing?   identityref
-
