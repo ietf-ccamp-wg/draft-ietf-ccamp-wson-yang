@@ -21,7 +21,7 @@ module ietf-wson-topology {
   import ietf-te-topology {
     prefix "tet";
     reference
-      "RFC YYYY: YANG Data Model for
+      "RFC 8795: YANG Data Model for
        Traffic Engineering (TE) Topologies";
   }
 
@@ -112,10 +112,10 @@ module ietf-wson-topology {
         default true;
         description
           "Indicates whether the WSON node is reconfigurable:
-           - true: the node is reconfigurable
-             (e.g., it is representing a ROADM node);
-           - false: the node is not reconfigurable
-             (e.g., it is representing a FOADM node).";
+           - true: the node is reconfigurable, i.e.,
+		     it is representing a ROADM node;
+           - false: the node is not reconfigurable, i.e., 
+             it is representing a FOADM node.";
       }
     }
   }
