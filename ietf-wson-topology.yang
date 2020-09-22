@@ -31,8 +31,7 @@ module ietf-wson-topology {
   import ietf-layer0-types {
     prefix "l0-types";
     reference
-      "RFC XXXX: A YANG Data Model for WSON
-       (Wavelength Switched Optical Networks)";
+      "RFC XXXX: A YANG Data Model for Layer 0 Types";
   }
 
 /* Note: The RFC Editor will replace XXXX with the number assigned
@@ -56,7 +55,7 @@ module ietf-wson-topology {
      technology-specific YANG model augmenting the generic TE
      topology module (ietf-te-topology) based on the information 
      model developed in RFC 7446 and the two encoding documents
-     RFC 7579.
+     RFC 7579 and RFC 7581.
 
      Copyright (c) 2020 IETF Trust and the persons identified
      as authors of the code.  All rights reserved.
@@ -71,7 +70,7 @@ module ietf-wson-topology {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2020-07-16 {
+  revision 2020-09-21 {
     description
       "Initial Version";
 
