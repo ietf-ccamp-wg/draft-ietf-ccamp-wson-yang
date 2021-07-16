@@ -1,4 +1,3 @@
-
 module: ietf-wson-topology
   augment /nw:networks/nw:network/nw:network-types/tet:te-topology:
     +--rw wson-topology!
