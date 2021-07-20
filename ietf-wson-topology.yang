@@ -22,23 +22,20 @@ module ietf-wson-topology {
        Traffic Engineering (TE) Topologies";
   }
 
-  /* Note: The RFC Editor will replace YYYY with the number assigned
-     to the RFC once draft-ietf-teas-yang-te-topo becomes an RFC.*/
-
   import ietf-layer0-types {
     prefix l0-types;
     reference
-      "RFC XXXX: A YANG Data Model for Layer 0 Types";
+      "RFC 9093: A YANG Data Model for Layer 0 Types";
   }
 
-/* Note: The RFC Editor will replace XXXX with the number assigned
-   to the RFC once draft-ietf-ccamp-layer0-types becomes an RFC.*/
-    
   organization
     "IETF CCAMP Working Group";
 
   contact
-    "Editor:   Haomian Zheng  <zhenghaomian@huawei.com>
+    "WG Web: <https://datatracker.ietf.org/wg/ccamp/>
+     WG List: <mailto:ccamp@ietf.org>
+
+     Editor:   Haomian Zheng  <zhenghaomian@huawei.com>
      Editor:   Young Lee  <younglee.tx@gmail.com>
      Editor:   Aihua Guo  <aihuaguo.ietf@gmail.com>
      Editor:   Victor Lopez <victor.lopez@nokia.com>
@@ -47,10 +44,10 @@ module ietf-wson-topology {
   description
     "This module provides a YANG data model for the routing and
      wavelength assignment (RWA) Traffic Engineering (TE)
-     topology in wavelength switched optical networks (WSONs).
-     The YANG model described in this document is a WSON
-     technology-specific YANG model augmenting the generic TE
-     topology module (ietf-te-topology) based on the information 
+     topology in Wavelength Switched Optical Networks (WSONs).
+     The YANG data model described in this document is a WSON
+     technology-specific YANG data model augmenting the generic TE
+     topology module (ietf-te-topology) based on the information
      model developed in RFC 7446 and the two encoding documents
      RFC 7579 and RFC 7581.
 
@@ -62,18 +59,18 @@ module ietf-wson-topology {
      subject to the license terms contained in, the Simplified
      BSD License set forth in Section 4.c of the IETF Trust's
      Legal Provisions Relating to IETF Documents
-     (http://trustee.ietf.org/license-info).
-     
-     This version of this YANG module is part of RFC XXXX; see
+     (https://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC 9094; see
      the RFC itself for full legal notices.";
 
-  revision 2021-07-16 {
+  revision 2021-07-19 {
     description
-      "Initial Version";
+      "Initial version";
 
     reference
-      "RFC XXXX: A YANG Data Model for WSON (Wavelength Switched
-       Optical Networks)";
+      "RFC 9094: A YANG Data Model for Wavelength Switched
+       Optical Networks (WSONs)";
   }
 
   /*
@@ -83,12 +80,11 @@ module ietf-wson-topology {
   augment "/nw:networks/nw:network/nw:network-types"
         + "/tet:te-topology" {
     description
-      "Augment network types to define WSON topology type.";
+      "Augment network types to define the WSON topology type.";
     container wson-topology {
-      presence
-        "Its presence identifies the WSON topology type.";
+      presence "Its presence identifies the WSON topology type.";
       description
-        "Introduce new network type for WSON topology.";
+        "Introduce a new network type for WSON topology.";
     }
   }
 
@@ -97,22 +93,26 @@ module ietf-wson-topology {
     when '/nw:networks/nw:network/nw:network-types'
        + '/tet:te-topology/wsont:wson-topology' {
       description
-      "Augmentation parameters apply only for networks with
-       WSON topology type.";
+        "Augmentation parameters apply only for networks with
+         WSON topology type.";
     }
-    description "Augment TE node attributes.";
+    description
+      "Augment TE node attributes.";
     container wson-node {
       presence "The TE node is a WSON node.";
-      description "WSON node attributes";
+      description
+        "WSON node attributes";
       leaf is-reconfigurable-node {
         type boolean;
         default "true";
         description
           "Indicates whether the WSON node is reconfigurable:
            - true: the node is reconfigurable, i.e.,
-             it is representing a ROADM node;
-           - false: the node is not reconfigurable, i.e., 
-             it is representing a FOADM node.";
+             it is representing a Reconfigurable Optical
+             Add/Drop Multiplexer (ROADM) node;
+           - false: the node is not reconfigurable, i.e.,
+             it is representing a Fixed Optical Add/Drop
+             Multiplexer (FOADM) node.";
       }
     }
   }
@@ -227,8 +227,8 @@ module ietf-wson-topology {
          WSON topology type.";
     }
     description
-      "Augment TE label range information for the TTP
-       Local Link Connectivities.";
+      "Augment TE label range information for the Tunnel
+       Termination Point (TTP) Local Link Connectivities.";
     uses l0-types:l0-label-range-info;
   }
 
@@ -303,7 +303,7 @@ module ietf-wson-topology {
     }
     description
       "Augment TE label range start for the TE node
-       connectivity matrices";
+       connectivity matrices.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -322,7 +322,7 @@ module ietf-wson-topology {
     }
     description
       "Augment TE label range end for the TE node
-       connectivity matrices";
+       connectivity matrices.";
     case wson {
       uses l0-types:wson-label-start-end;
     }
@@ -341,7 +341,7 @@ module ietf-wson-topology {
     }
     description
       "Augment TE label range step for the TE node
-       connectivity matrices";
+       connectivity matrices.";
     case wson {
       uses l0-types:wson-label-step;
     }
@@ -361,7 +361,7 @@ module ietf-wson-topology {
     }
     description
       "Augment TE label hop for the underlay primary path of the
-       TE node connectivity matrices";
+       TE node connectivity matrices.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -381,7 +381,7 @@ module ietf-wson-topology {
     }
     description
       "Augment TE label hop for the underlay backup path of the
-       TE node connectivity matrices";
+       TE node connectivity matrices.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -405,7 +405,7 @@ module ietf-wson-topology {
     description
       "Augment TE label hop for the explicit route objects excluded
        by the path computation of the TE node connectivity
-       matrices";
+       matrices.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -429,7 +429,7 @@ module ietf-wson-topology {
     description
       "Augment TE label hop for the explicit route objects included
        by the path computation of the TE node connectivity
-       matrices";
+       matrices.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -449,7 +449,7 @@ module ietf-wson-topology {
     }
     description
       "Augment TE label hop for the computed path route objects
-       of the TE node connectivity matrices";
+       of the TE node connectivity matrices.";
     case wson {
       uses l0-types:wson-label-hop;
     }
@@ -517,7 +517,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/tet:to/"
@@ -580,7 +580,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:te-node-attributes/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/"
@@ -747,7 +747,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:information-source-entry/tet:connectivity-matrices/"
         + "tet:underlay/tet:primary-path/tet:path-element/tet:type/"
@@ -915,7 +915,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:information-source-entry/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/"
@@ -975,7 +975,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:information-source-entry/tet:connectivity-matrices/"
         + "tet:connectivity-matrix/"
@@ -1086,11 +1086,11 @@ module ietf-wson-topology {
   }
 
   augment "/nw:networks/nw:network/nw:node/tet:te/"
-      + "tet:tunnel-termination-point/"
-      + "tet:local-link-connectivities/"
-      + "tet:label-restrictions/tet:label-restriction/"
-      + "tet:label-start/"
-      + "tet:te-label/tet:technology" {
+        + "tet:tunnel-termination-point/"
+        + "tet:local-link-connectivities/"
+        + "tet:label-restrictions/tet:label-restriction/"
+        + "tet:label-start/"
+        + "tet:te-label/tet:technology" {
     when '../../../../../../../../'
        + 'nw:network-types/tet:te-topology/'
        + 'wsont:wson-topology' {
@@ -1111,7 +1111,7 @@ module ietf-wson-topology {
         + "tet:local-link-connectivities/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-end/"
-        + "tet:te-label/tet:technology"{
+        + "tet:te-label/tet:technology" {
     when '../../../../../../../../'
        + 'nw:network-types/tet:te-topology/'
        + 'wsont:wson-topology' {
@@ -1132,7 +1132,7 @@ module ietf-wson-topology {
         + "tet:local-link-connectivities/"
         + "tet:label-restrictions/tet:label-restriction/"
         + "tet:label-step/"
-        + "tet:technology"{
+        + "tet:technology" {
     when '../../../../../../../'
        + 'nw:network-types/tet:te-topology/'
        + 'wsont:wson-topology' {
@@ -1319,7 +1319,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nw:node/tet:te/"
         + "tet:tunnel-termination-point/"
         + "tet:local-link-connectivities/"
@@ -1521,7 +1521,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/nw:network/nt:link/tet:te/"
         + "tet:information-source-entry/"
         + "tet:label-restrictions/tet:label-restriction/"
@@ -1575,7 +1575,7 @@ module ietf-wson-topology {
       uses l0-types:wson-label-step;
     }
   }
-  
+
   augment "/nw:networks/tet:te/tet:templates/"
         + "tet:link-template/tet:te-link-attributes/"
         + "tet:underlay/tet:primary-path/tet:path-element/tet:type/"
